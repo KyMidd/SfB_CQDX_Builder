@@ -5,7 +5,7 @@
 import csv,os,shutil,fileinput
 
 # Open CSV that contains site codes and subnets
-with open('SubnetsList.csv', 'rt') as f:
+with open('SiteCodesWithRegions/VF_SiteCodesWithRegions_Processed.csv', 'rt') as f:
     csvReturn = ['Sites', 'Subnet1', 'etc']
     for row in f:
         for x in range(0, str(row).count(',')):
@@ -15,6 +15,7 @@ with open('SubnetsList.csv', 'rt') as f:
 ## Remove "\n" from last entry of each imported string
 for x in range(3, (len(csvReturn) - 3)):
     del(csvReturn[x][-1])
+    #print(csvReturn[x])
 
 # Template Variables - replace these values (caps sensitive) in template doc
 #  This will allow script to replace them iteratively with site-specific values.
@@ -24,12 +25,12 @@ for x in range(3, (len(csvReturn) - 3)):
 ## Template filename = SfB_CQM_ReportSite_Template.cqdx
 
 ## Build variables for report
-for x in range(3, (len(csvReturn) - 3)):
+for x in range(3, (len(csvReturn))):
     #print(csvReturn[x])
     
-    # Set sitecode on each loop
-    siteCode = csvReturn[x][0]
-    #print(siteCode)
+    # Set regioncode on each loop
+    regionCode = csvReturn[x][0]
+    #print(regionCode)
 
     # Get all subnets as a variable
     del csvReturn[x][0]
@@ -55,10 +56,10 @@ for x in range(3, (len(csvReturn) - 3)):
     path = "SfB_CQM_ReportSiteFolder/"
 
     # Template file (modified with variables for find/replace
-    sourceFile = "SfB_CQM_ReportSite_Template.cqdx"
+    sourceFile = "VF_Regional_FailedCallsTrending_TEMPLATE.cqdx"
     
     # Target file iterative
-    targetFile = "SfB_CQM_ReportsFolder/" + "SfB_CQM_ReportSite_" + str(siteCode) + ".cqdx"
+    targetFile = "generatedReports/" + "SfB_CQM_ReportSite_" + str(regionCode) + ".cqdx"
     #print(targetFile)
 
     # Read template, modify in-memory buffer with site-specific info, write out file with new name
@@ -66,9 +67,13 @@ for x in range(3, (len(csvReturn) - 3)):
     fileOutput = open(targetFile, "wt")
     for line in fileInput:
         buffer = line
-        modifyBuffer1 = buffer.replace('SITE', siteCode)
-        modifyBuffer2 = modifyBuffer1.replace('SUBNETS1', SUBNETS1)
-        modifyBuffer3 = modifyBuffer2.replace('SUBNETS2', SUBNETS2)
-        fileOutput.write(modifyBuffer3)
+        buffer = buffer.replace('REGION', regionCode)
+        buffer = buffer.replace('SUBNETS1', SUBNETS1)
+        buffer = buffer.replace('SUBNETS2', SUBNETS2)
+        buffer = buffer.replace(' | \n', '')
+        buffer = buffer.replace(' [\\n]', '')
+        buffer = buffer.replace('\\n\\', '\\')
+        buffer = buffer.replace('\\n]', ']')
+        fileOutput.write(buffer)
     fileInput.close()
     fileOutput.close()
