@@ -5,7 +5,7 @@
 import csv,os,shutil,fileinput
 
 # Open CSV that contains site codes and subnets
-with open('SiteCodesWithRegions/VF_SiteCodesWithRegions_Processed.csv', 'rt') as f:
+with open('SubnetsList.csv', 'rt') as f:
     csvReturn = ['Sites', 'Subnet1', 'etc']
     for row in f:
         for x in range(0, str(row).count(',')):
@@ -56,7 +56,7 @@ for x in range(3, (len(csvReturn))):
     path = "SfB_CQM_ReportSiteFolder/"
 
     # Template file (modified with variables for find/replace
-    sourceFile = "VF_Regional_FailedCallsTrending_TEMPLATE.cqdx"
+    sourceFile = "SfB_CQM_ReportSite_Template.cqdx"
     
     # Target file iterative
     targetFile = "generatedReports/" + "SfB_CQM_ReportSite_" + str(regionCode) + ".cqdx"
